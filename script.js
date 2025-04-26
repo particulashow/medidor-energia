@@ -1,24 +1,46 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Medidor de Energia</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div id="energy-container">
-    <h1>Energia da Live</h1>
-    <div id="energy-bar">
-      <div id="energy-fill"></div>
-    </div>
-    <p id="energy-percentage">0%</p>
-  </div>
+const streamId = "748c0ff7"; // substitui pelo teu ID real se necessário
+const socket = new WebSocket(`wss://io.socialstream.ninja?streamId=${streamId}`);
 
-  <!-- Efeito de explosão -->
-  <div id="explosion" class="hidden">🎉🎉🎉</div>
+let totalComments = 0;
+const maxEnergy = 100;
+let explosionTriggered = false;
 
-  <script src="script.js"></script>
-</body>
-</html>
+socket.addEventListener("open", () => {
+  console.log("Ligado ao WebSocket do Medidor de Energia!");
+});
+
+socket.addEventListener("message", (event) => {
+  const data = JSON.parse(event.data);
+
+  if (data.type === "chat-message") {
+    totalComments++;
+    updateEnergy();
+  }
+});
+
+function updateEnergy() {
+  let energy = (totalComments / maxEnergy) * 100;
+
+  if (energy >= 100) {
+    energy = 100;
+    if (!explosionTriggered) {
+      triggerExplosion();
+      explosionTriggered = true;
+
+      // Começar a animação do número a piscar
+      document.getElementById('energy-percentage').classList.add('flash');
+    }
+  }
+
+  document.getElementById('energy-fill').style.width = `${energy}%`;
+  document.getElementById('energy-percentage').textContent = `${Math.round(Math.min((totalComments / maxEnergy) * 100, 999))}%`;
+}
+
+function triggerExplosion() {
+  const explosion = document.getElementById('explosion');
+  explosion.classList.add('show');
+
+  setTimeout(() => {
+    explosion.classList.remove('show');
+  }, 1000);
+}
