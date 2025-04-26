@@ -1,4 +1,4 @@
-const streamId = "748c0ff7"; // substitui pelo teu ID real se necessário
+const streamId = "748c0ff7";
 const socket = new WebSocket(`wss://io.socialstream.ninja?streamId=${streamId}`);
 
 let totalComments = 0;
@@ -12,7 +12,9 @@ socket.addEventListener("open", () => {
 socket.addEventListener("message", (event) => {
   const data = JSON.parse(event.data);
 
-  if (data.type === "chat-message") {
+  // Aceitar vários tipos de mensagem!
+  if (data.type === "chat-message" || data.type === "social-comment" || data.type === "comment") {
+    console.log("Mensagem recebida:", data.message); // Para confirmar no OBS
     totalComments++;
     updateEnergy();
   }
@@ -27,7 +29,6 @@ function updateEnergy() {
       triggerExplosion();
       explosionTriggered = true;
 
-      // Começar a animação do número a piscar
       document.getElementById('energy-percentage').classList.add('flash');
     }
   }
