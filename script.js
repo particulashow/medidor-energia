@@ -1,25 +1,24 @@
-const streamId = "748c0ff7";
-const socket = new WebSocket(`wss://io.socialstream.ninja?streamId=${streamId}`);
-
+// Configurações
+let domain = new URLSearchParams(window.location.search).get('domain') || 'http://localhost:3900';
 let totalComments = 0;
 const maxEnergy = 100;
 let explosionTriggered = false;
 
-socket.addEventListener("open", () => {
-  console.log("Ligado ao WebSocket do Medidor de Energia!");
-});
+// Função para buscar dados ao servidor
+function fetchData() {
+  fetch(`${domain}/wordcloud`)
+    .then(response => response.json())
+    .then(data => {
+      if (data && data.wordcloud) {
+        const chatHistory = data.wordcloud.toLowerCase().split(',').filter(w => w.trim() !== "");
+        totalComments = chatHistory.length;
+        updateEnergy();
+      }
+    })
+    .catch(error => console.error("Erro ao buscar dados:", error));
+}
 
-socket.addEventListener("message", (event) => {
-  const data = JSON.parse(event.data);
-
-  // Aceitar vários tipos de mensagem!
-  if (data.type === "chat-message" || data.type === "social-comment" || data.type === "comment") {
-    console.log("Mensagem recebida:", data.message); // Para confirmar no OBS
-    totalComments++;
-    updateEnergy();
-  }
-});
-
+// Função para atualizar o medidor
 function updateEnergy() {
   let energy = (totalComments / maxEnergy) * 100;
 
@@ -28,7 +27,6 @@ function updateEnergy() {
     if (!explosionTriggered) {
       triggerExplosion();
       explosionTriggered = true;
-
       document.getElementById('energy-percentage').classList.add('flash');
     }
   }
@@ -37,6 +35,7 @@ function updateEnergy() {
   document.getElementById('energy-percentage').textContent = `${Math.round(Math.min((totalComments / maxEnergy) * 100, 999))}%`;
 }
 
+// Função de explosão
 function triggerExplosion() {
   const explosion = document.getElementById('explosion');
   explosion.classList.add('show');
@@ -45,3 +44,9 @@ function triggerExplosion() {
     explosion.classList.remove('show');
   }, 1000);
 }
+
+// Atualiza os dados a cada 1 segundo
+setInterval(fetchData, 1000);
+
+// Primeiro carregamento
+fetchData();
