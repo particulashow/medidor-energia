@@ -45,3 +45,36 @@ h1 {
   font-size: 1.5rem;
   margin-top: 10px;
 }
+
+/* Explosão */
+#explosion {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 5rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+#explosion.show {
+  opacity: 1;
+  animation: pop 1s ease-out forwards;
+}
+
+@keyframes pop {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  50% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+}
+
+/* Piscar do número */
+@keyframes flash {
+  0%, 100% { color: #00ff00; }
+  50% { color: #ffff00; }
+}
+
+.flash {
+  animation: flash 1s infinite;
+}
