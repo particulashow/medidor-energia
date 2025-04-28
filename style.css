@@ -91,3 +91,22 @@ body {
 .pulse {
   animation: pulse 1s infinite;
 }
+
+#special-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3em;
+  color: gold;
+  text-shadow: 0 0 10px #fff, 0 0 20px gold;
+  animation: appear 1s ease forwards;
+  opacity: 0;
+  z-index: 5;
+}
+
+@keyframes appear {
+  to {
+    opacity: 1;
+  }
+}
