@@ -2,12 +2,13 @@ body {
   margin: 0;
   padding: 0;
   background: transparent;
-  font-family: 'Montserrat', sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  font-family: 'Montserrat', sans-serif;
   overflow: hidden;
+  position: relative;
 }
 
 #energy-container {
@@ -15,66 +16,78 @@ body {
   padding: 30px;
   border-radius: 12px;
   text-align: center;
-  color: white;
-  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+  width: 80%;
+  max-width: 600px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  position: relative;
+  z-index: 2;
 }
 
-h1 {
-  font-size: 2rem;
+#energy-title {
+  color: white;
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+#energy-bar-background {
+  background: #555;
+  width: 100%;
+  height: 30px;
+  border-radius: 20px;
+  overflow: hidden;
   margin-bottom: 20px;
 }
 
 #energy-bar {
-  width: 400px;
-  height: 30px;
-  background: rgba(255,255,255,0.2);
-  border-radius: 15px;
-  overflow: hidden;
-  margin: 20px auto;
-}
-
-#energy-fill {
-  height: 100%;
+  background: linear-gradient(90deg, #f44336, #4caf50);
   width: 0%;
-  background: linear-gradient(90deg, #00f2fe, #4facfe);
-  transition: width 0.5s ease-in-out;
-  border-radius: 15px 0 0 15px;
+  height: 100%;
+  border-radius: 20px;
+  transition: width 0.5s ease, background 0.5s ease;
 }
 
 #energy-percentage {
-  font-size: 1.5rem;
-  margin-top: 10px;
+  color: white;
+  font-size: 1.5em;
 }
 
-/* Explosão */
-#explosion {
+#effects-container {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 5rem;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
+  top: 0;
+  left: 0;
+  z-index: 1;
 }
 
-#explosion.show {
-  opacity: 1;
-  animation: pop 1s ease-out forwards;
+.spark {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  animation: sparkAnimation 1s forwards;
+  opacity: 0.7;
 }
 
-@keyframes pop {
-  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-  50% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.8; }
-  100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+@keyframes sparkAnimation {
+  from {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translate(calc(100px - 200px * random()), calc(100px - 200px * random())) scale(0.5);
+    opacity: 0;
+  }
 }
 
-/* Piscar número */
-@keyframes flash {
-  0%, 100% { color: #00ff00; }
-  50% { color: #ffff00; }
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
 
-.flash {
-  animation: flash 1s infinite;
+.pulse {
+  animation: pulse 1s infinite;
 }
