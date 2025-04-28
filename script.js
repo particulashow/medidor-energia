@@ -6,6 +6,7 @@ const energyTitle = document.getElementById('energy-title');
 const energyBar = document.getElementById('energy-bar');
 const energyPercentage = document.getElementById('energy-percentage');
 const effectsContainer = document.getElementById('effects-container');
+const commentCounter = document.getElementById('comment-counter');
 
 // Atualiza o título
 energyTitle.textContent = decodeURIComponent(title);
@@ -17,6 +18,10 @@ function fetchEnergy() {
       const words = (data.wordcloud || "").split(',');
       const totalComments = words.length;
 
+      // Atualiza o contador
+      commentCounter.textContent = `Comentários recebidos: ${totalComments}`;
+
+      // Atualiza a energia
       let energyLevel = Math.min((totalComments / 100) * 100, 100);
 
       updateEnergy(energyLevel);
