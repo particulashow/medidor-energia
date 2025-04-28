@@ -1,9 +1,14 @@
 const params = new URLSearchParams(window.location.search);
 const domain = params.get('domain') || 'http://localhost:4000';
+const title = params.get('title') || 'Energia da Live 🔥';
 
+const energyTitle = document.getElementById('energy-title');
 const energyBar = document.getElementById('energy-bar');
 const energyPercentage = document.getElementById('energy-percentage');
 const effectsContainer = document.getElementById('effects-container');
+
+// Atualiza o título
+energyTitle.textContent = decodeURIComponent(title);
 
 function fetchEnergy() {
   fetch(`${domain}/wordcloud`)
@@ -12,7 +17,6 @@ function fetchEnergy() {
       const words = (data.wordcloud || "").split(',');
       const totalComments = words.length;
 
-      // Cálculo da energia (máximo 100 comentários para 100%)
       let energyLevel = Math.min((totalComments / 100) * 100, 100);
 
       updateEnergy(energyLevel);
@@ -32,7 +36,6 @@ function updateEnergy(energyLevel) {
     energyBar.style.background = 'linear-gradient(90deg, #ff0000, #cc0000)';
   }
 
-  // Limpa classes anteriores
   energyBar.classList.remove('pulse');
 
   if (energyLevel >= 90 && energyLevel < 100) {
@@ -43,12 +46,12 @@ function updateEnergy(energyLevel) {
     createSpark(Math.min(3, Math.floor(energyLevel / 20)));
   }
 
-  if (energyLevel >= 100) {
+  if (energyLevel >= 100 && !document.getElementById('special-message')) {
     explodeEffect();
+    showSpecialMessage();
   }
 }
 
-// Cria faíscas
 function createSpark(quantity) {
   for (let i = 0; i < quantity; i++) {
     const spark = document.createElement('div');
@@ -63,7 +66,6 @@ function createSpark(quantity) {
   }
 }
 
-// Efeito especial 100%
 function explodeEffect() {
   for (let i = 0; i < 20; i++) {
     const spark = document.createElement('div');
@@ -81,6 +83,12 @@ function explodeEffect() {
   }
 }
 
-// Atualizar a cada segundo
+function showSpecialMessage() {
+  const message = document.createElement('div');
+  message.id = 'special-message';
+  message.textContent = 'EXPLOSÃO DE ENERGIA! ⚡';
+  document.body.appendChild(message);
+}
+
 setInterval(fetchEnergy, 1000);
 fetchEnergy();
