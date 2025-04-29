@@ -1,5 +1,5 @@
 const params = new URLSearchParams(window.location.search);
-const domain = params.get('domain') || 'http://localhost:4000';
+const domain = params.get('domain') || 'http://localhost:3900';
 const title = params.get('title') || 'Energia da Live 🔥';
 
 const energyTitle = document.getElementById('energy-title');
