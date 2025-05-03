@@ -31,20 +31,23 @@ function iniciarWebSocket() {
 
   socket.addEventListener('open', () => {
     socket.send(JSON.stringify({ type: 'subscribe', stream: streamId }));
-    console.log('Ligado ao WebSocket!');
+    console.log('Ligado ao WebSocket do StreamNinja!');
   });
 
   socket.addEventListener('message', (event) => {
-    const data = JSON.parse(event.data);
-
-    if (data.type === 'chat') {
-      contador++;
-      atualizarEnergia(contador);
+    try {
+      const data = JSON.parse(event.data);
+      if (data.type === 'chat') {
+        contador++;
+        atualizarEnergia(contador);
+      }
+    } catch (e) {
+      console.error('Erro ao processar mensagem:', e);
     }
   });
 
   socket.addEventListener('close', () => {
-    console.warn('WebSocket desconectado. A tentar reconectar...');
+    console.warn('WebSocket desconectado. Reconnecting...');
     setTimeout(iniciarWebSocket, 2000);
   });
 
@@ -53,5 +56,5 @@ function iniciarWebSocket() {
   });
 }
 
-// Inicia
+// Iniciar ligação ao WebSocket
 iniciarWebSocket();
