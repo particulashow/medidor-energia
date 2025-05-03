@@ -19,15 +19,14 @@ function atualizarEnergia(count) {
 
   fill.style.width = porcentagem + '%';
 
-  // Alterar cor da barra conforme a percentagem
   if (porcentagem < 40) {
-    fill.style.background = 'linear-gradient(90deg, #ff4e50, #f9d423)'; // vermelho > amarelo
+    fill.style.background = 'linear-gradient(90deg, #ff4e50, #f9d423)';
     status.innerText = 'Energia baixa... 🔥';
   } else if (porcentagem < 80) {
-    fill.style.background = 'linear-gradient(90deg, #f9d423, #00c9ff)'; // amarelo > azul
+    fill.style.background = 'linear-gradient(90deg, #f9d423, #00c9ff)';
     status.innerText = 'Aquecendo... ⚡';
   } else {
-    fill.style.background = 'linear-gradient(90deg, #00c9ff, #92fe9d)'; // azul > verde
+    fill.style.background = 'linear-gradient(90deg, #00c9ff, #92fe9d)';
     status.innerText = 'Explosão máxima! 🚀';
   }
 }
@@ -37,7 +36,6 @@ function buscarComentarios() {
     .then(response => response.json())
     .then(data => {
       const chatHistory = (data.wordcloud || "")
-        .toLowerCase()
         .split(',')
         .map(w => w.trim())
         .filter(w => w.length > 0);
@@ -47,10 +45,10 @@ function buscarComentarios() {
     .catch(error => console.error('Erro ao buscar dados:', error));
 }
 
-// Primeiro limpar o chat
+// Limpa os comentários no início
 resetarChat();
 
-// Depois começar a leitura
+// Inicia o ciclo após pequena pausa
 setTimeout(() => {
   buscarComentarios();
   setInterval(buscarComentarios, 1000);
