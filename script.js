@@ -1,19 +1,14 @@
 const params = new URLSearchParams(window.location.search);
-const domain = params.get('domain') || 'http://localhost:3900';
+const streamId = params.get('streamid') || '748c0ff7';
 const title = params.get('title') || 'Energia da Live 🚀';
-const maxComentarios = parseInt(params.get('max') || 50);
+const maxComentarios = parseInt(params.get('max')) || 50;
 
 document.getElementById('energy-title').innerText = title;
 
-function resetarChat() {
-  fetch(`${domain}/clear-chat`)
-    .then(() => console.log('Chat limpo para novo início!'))
-    .catch(err => console.error('Erro ao limpar chat:', err));
-}
+let contador = 0;
 
 function atualizarEnergia(count) {
-  let porcentagem = Math.min((count / maxComentarios) * 100, 100);
-
+  const porcentagem = Math.min((count / maxComentarios) * 100, 100);
   const fill = document.getElementById('energy-fill');
   const status = document.getElementById('energy-status');
 
@@ -31,25 +26,32 @@ function atualizarEnergia(count) {
   }
 }
 
-function buscarComentarios() {
-  fetch(`${domain}/wordcloud`)
-    .then(response => response.json())
-    .then(data => {
-      const chatHistory = (data.wordcloud || "")
-        .split(',')
-        .map(w => w.trim())
-        .filter(w => w.length > 0);
+function iniciarWebSocket() {
+  const socket = new WebSocket('wss://io.socialstream.ninja');
 
-      atualizarEnergia(chatHistory.length);
-    })
-    .catch(error => console.error('Erro ao buscar dados:', error));
+  socket.addEventListener('open', () => {
+    socket.send(JSON.stringify({ type: 'subscribe', stream: streamId }));
+    console.log('Ligado ao WebSocket!');
+  });
+
+  socket.addEventListener('message', (event) => {
+    const data = JSON.parse(event.data);
+
+    if (data.type === 'chat') {
+      contador++;
+      atualizarEnergia(contador);
+    }
+  });
+
+  socket.addEventListener('close', () => {
+    console.warn('WebSocket desconectado. A tentar reconectar...');
+    setTimeout(iniciarWebSocket, 2000);
+  });
+
+  socket.addEventListener('error', (err) => {
+    console.error('Erro no WebSocket:', err);
+  });
 }
 
-// Limpa os comentários no início
-resetarChat();
-
-// Inicia o ciclo após pequena pausa
-setTimeout(() => {
-  buscarComentarios();
-  setInterval(buscarComentarios, 1000);
-}, 1000);
+// Inicia
+iniciarWebSocket();
